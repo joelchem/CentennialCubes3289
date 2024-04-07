@@ -1,3 +1,4 @@
+
 """
 The Python code you will write for this module should read
 acceleration data from the IMU. When a reading comes in that surpasses
@@ -16,22 +17,24 @@ You will need to complete the take_photo() function and configure the VARIABLES 
 #import libraries
 import time
 import board
-from adafruit_lsm6ds.lsm6dsox import LSM6DSOX as LSM6DS
-from adafruit_lis3mdl import LIS3MDL
-from git import Repo
-from picamera2 import Picamera2
+from adafruit_lsm6ds.lsm6dsox import LSM6DSOX as LSM6DS 
+from adafruit_lis3mdl import LIS3MDL 
+from git import Repo 
+from picamera2 import Picamera2 
+import json
 
 #VARIABLES
 THRESHOLD = 0      #Any desired value from the accelerometer
 REPO_PATH = ""     #Your github repo path: ex. /home/pi/FlatSatChallenge
-FOLDER_PATH = ""   #Your image folder path in your GitHub repo: ex. /Images
+FOLDER_PATH = "/Images"   #Your image folder path in your GitHub repo: ex. /Images
 
 #imu and camera initialization
 i2c = board.I2C()
 accel_gyro = LSM6DS(i2c)
 mag = LIS3MDL(i2c)
 picam2 = Picamera2()
-
+capture_config = picam2.create_still_configuration()
+picam2.start(show_preview=True)
 
 def git_push():
     """
@@ -66,19 +69,18 @@ def img_gen(name):
 
 def take_photo():
     """
-    This function is NOT complete. Takes a photo when the FlatSat is shaken.
-    Replace psuedocode with your own code.
+    Takes a picture every 5 seconds over a period of 50 seconds.
     """
-    while True:
-        accelx, accely, accelz = accel_gyro.acceleration
+    image_list = []
+    for i in range(10):
+        time.sleep(5)
+        img_path = img_gen("CentennialCubes")
+        picam2.switch_mode_and_capture_file(capture_config, img_path)
+        image_list.append(img_path)
+    with open("image_list.json", "w") as f:
+        json.dump(image_list, f, indent=2)
+    git_push()
 
-        #CHECKS IF READINGS ARE ABOVE THRESHOLD
-            #PAUSE
-            #name = ""     #First Name, Last Initial  ex. MasonM
-            #TAKE PHOTO
-            #PUSH PHOTO TO GITHUB
-        
-        #PAUSE
 
 
 def main():
@@ -87,3 +89,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+
