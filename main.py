@@ -21,7 +21,6 @@ from adafruit_lsm6ds.lsm6dsox import LSM6DSOX as LSM6DS
 from adafruit_lis3mdl import LIS3MDL 
 from git import Repo 
 from picamera2 import Picamera2 
-import json
 
 #VARIABLES
 THRESHOLD = 0      #Any desired value from the accelerometer
@@ -71,17 +70,11 @@ def take_photo():
     """
     Takes a picture every 5 seconds over a period of 50 seconds.
     """
-    image_list = []
     for i in range(10):
         time.sleep(5)
         img_path = img_gen("CentennialCubes")
         picam2.switch_mode_and_capture_file(capture_config, img_path)
-        image_list.append(img_path)
-    with open("image_list.json", "w") as f:
-        json.dump(image_list, f, indent=2)
     git_push()
-
-
 
 def main():
     take_photo()
