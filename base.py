@@ -10,6 +10,7 @@ THRESHOLD = -20
 prev_img = None
 prev_yuv = None
 for i in range(len(image_list)):
+    img_path = image_list[i]
     img = cv.imread(img_path)
     yuv = cv.cvtColor(img, cv.COLOR_BGR2YUV)
     if i > 0:
